@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Filter by {{ data.field | titlecase }}</h2>
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Starts with...</mat-label>
+    <input matInput [(ngModel)]="conditionValue" />
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="apply()"
+    [disabled]="!conditionValue"
+  >
+    Apply
+  </button>
+</mat-dialog-actions>

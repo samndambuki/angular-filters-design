@@ -1,0 +1,14 @@
+<mat-dialog-content>
+  <mat-form-field>
+    <mat-label> Filter Field </mat-label>
+    <mat-select [(ngModel)]="selectedFilter">
+      <mat-option *ngFor="let filter of filters" [value]="filter">{{
+        filter
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancel</button>
+  <button mat-button color="primary" (click)="apply()">Apply</button>
+</mat-dialog-actions>
