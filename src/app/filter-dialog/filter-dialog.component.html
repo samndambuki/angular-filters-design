@@ -1,12 +1,25 @@
 <mat-dialog-content>
-  <mat-form-field>
+  <h3>Quick filters</h3>
+  <!-- <div *ngFor="let filter of filters">
+    <mat-checkbox [(ngModel)]="quickFilters[filter]">
+      {{ filter | titlecase }}
+    </mat-checkbox>
+  </div> -->
+  <mat-checkbox [(ngModel)]="quickFilters['Active']">Active Users</mat-checkbox>
+  <mat-checkbox [(ngModel)]="quickFilters['Inactive']"
+    >Inactive Users</mat-checkbox
+  >
+  <mat-checkbox [(ngModel)]="quickFilters['Admin']">Admins</mat-checkbox>
+  <mat-checkbox [(ngModel)]="quickFilters['User']">Users</mat-checkbox>
+  <hr />
+  <!-- <mat-form-field>
     <mat-label> Filter Field </mat-label>
     <mat-select [(ngModel)]="selectedFilter">
       <mat-option *ngFor="let filter of filters" [value]="filter">{{
         filter
       }}</mat-option>
     </mat-select>
-  </mat-form-field>
+  </mat-form-field> -->
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="close()">Cancel</button>
