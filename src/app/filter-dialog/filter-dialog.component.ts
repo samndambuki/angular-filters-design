@@ -9,6 +9,7 @@ import {
   MatDialogContent,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
@@ -24,6 +25,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatDialogActions,
     MatDialogContent,
     MatCheckboxModule,
+    MatIconModule
   ],
   templateUrl: './filter-dialog.component.html',
   styleUrl: './filter-dialog.component.scss',
@@ -47,9 +49,19 @@ export class FilterDialogComponent {
     Admin: false,
     User: false,
   };
+  customFilters: { field: string; operator: string; value: string }[] = [];
   constructor(private dialogRef: MatDialogRef<FilterDialogComponent>) {
     // this.filters.forEach((filter) => (this.quickFilters[filter] = false));
   }
+
+  addCustomFilter() {
+    this.customFilters.push({ field: '', operator: '', value: '' });
+  }
+
+  removeCustomFilter(index: number) {
+    this.customFilters.splice(index, 1);
+  }
+
   close() {
     this.dialogRef.close();
   }
@@ -57,6 +69,10 @@ export class FilterDialogComponent {
     this.dialogRef.close({
       quickFilters: this.quickFilters,
       selectedFilter: this.selectedFilter,
+      customFilters: this.customFilters,
     });
+  }
+  get selectedQuickFiltersCount(): number {
+    return Object.values(this.quickFilters).filter((value) => value).length;
   }
 }

@@ -203,7 +203,8 @@ export class FilterTableComponent {
     // });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        const { selectedFilter, quickFilters } = result;
+        const { selectedFilter, quickFilters, customFilters } = result;
+        let filteredData = [...this.allUsers];
         const activeQuickFilters = Object.keys(quickFilters).filter(
           (key) => quickFilters[key] === true
         );
@@ -213,6 +214,14 @@ export class FilterTableComponent {
               activeQuickFilters.includes(user.status) ||
               activeQuickFilters.includes(user.role)
           );
+        }
+        if (customFilters && customFilters.length > 0) {
+          customFilters.forEach((filter: any) => {
+            const { field, operator, value } = filter;
+            filteredData = filteredData.filter((user) => {
+              
+            });
+          });
         } else if (selectedFilter) {
           const conditionDialog = this.dialog.open(ConditionDialogComponent, {
             width: '350px',

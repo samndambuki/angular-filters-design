@@ -5,6 +5,9 @@
       {{ filter | titlecase }}
     </mat-checkbox>
   </div> -->
+  <p *ngIf="selectedQuickFiltersCount > 0">
+    {{ selectedQuickFiltersCount }} filter(s) selected
+  </p>
   <mat-checkbox [(ngModel)]="quickFilters['Active']">Active Users</mat-checkbox>
   <mat-checkbox [(ngModel)]="quickFilters['Inactive']"
     >Inactive Users</mat-checkbox
@@ -12,6 +15,42 @@
   <mat-checkbox [(ngModel)]="quickFilters['Admin']">Admins</mat-checkbox>
   <mat-checkbox [(ngModel)]="quickFilters['User']">Users</mat-checkbox>
   <hr />
+
+  <h3>Custom Filters</h3>
+  <div *ngFor="let filter of customFilters; let i = index">
+    <mat-form-field appearance="outline">
+      <mat-label>Field</mat-label>
+      <mat-select [(ngModel)]="filter.field">
+        <mat-option value="firstName">First Name</mat-option>
+        <mat-option value="lastName">Last Name</mat-option>
+        <mat-option value="email">Email</mat-option>
+        <mat-option value="role">Role</mat-option>
+        <mat-option value="status">Status</mat-option>
+        <mat-option value="phoneNumber">Phone Number</mat-option>
+        <mat-option value="location">Location</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Operator</mat-label>
+      <mat-select [(ngModel)]="filter.operator">
+        <mat-option value="equals">Equals</mat-option>
+        <mat-option value="contains">Contains</mat-option>
+        <mat-option value="startsWith">Starts With</mat-option>
+        <mat-option value="endsWith">Ends With</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <input matInput [(ngModel)]="filter.value" />
+    </mat-form-field>
+    <button mat-icon-button (click)="removeCustomFilter(i)" color="warn">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+  <button mat-stroked-button color="primary" (click)="addCustomFilter()">
+    <mat-icon>add</mat-icon>
+    Add Filter
+  </button>
+
   <!-- <mat-form-field>
     <mat-label> Filter Field </mat-label>
     <mat-select [(ngModel)]="selectedFilter">
