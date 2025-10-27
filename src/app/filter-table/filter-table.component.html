@@ -8,24 +8,12 @@
     <mat-icon>filter_list</mat-icon>
     Add filters
   </button>
-  <!-- <button
-    mat-raised-button
-    color="primary"
-    style="margin: 10px"
-    [matMenuTriggerFor]="filterMenu"
-  >
-    <mat-icon>filter_list</mat-icon>
-    Add filters
-  </button> -->
-  <!-- <mat-menu #filterMenu="matMenu">
-    <button
-      mat-menu-item
-      *ngFor="let filter of filters"
-      (click)="openConditionDialog(filter)"
-    >
-      {{ filter | titlecase }}
-    </button>
-  </mat-menu> -->
+  <p style="margin: 10px" *ngIf="filteredUsers">
+    Showing {{ filteredUsers.length }} result(s)
+  </p>
+  <button style="margin: 10px" mat-stroked-button (click)="resetFilters()">
+    Clear filters
+  </button>
   <table mat-table [dataSource]="filteredUsers" class="mat-elevation-z8">
     <ng-container matColumnDef="firstName">
       <th mat-header-cell *matHeaderCellDef>First Name</th>

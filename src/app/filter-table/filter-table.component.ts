@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../user';
 import { MatDialog } from '@angular/material/dialog';
 import { FilterDialogComponent } from '../filter-dialog/filter-dialog.component';
@@ -22,40 +22,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './filter-table.component.html',
   styleUrl: './filter-table.component.scss',
 })
-export class FilterTableComponent {
-  // allUsers: User[] = [
-  //   {
-  //     firstName: 'Samuel',
-  //     lastName: 'Ndambuki',
-  //     email: 'sam@gmail.com',
-  //     role: 'Admin',
-  //     status: 'Active',
-  //     createdAt: '2024-10-01',
-  //     phoneNumber: '0712345678',
-  //     location: 'Nairobi',
-  //   },
-  //   {
-  //     firstName: 'Dickson',
-  //     lastName: 'Githere',
-  //     email: 'dickson@gmail.com',
-  //     role: 'User',
-  //     status: 'Inactive',
-  //     createdAt: '2024-08-15',
-  //     phoneNumber: '0722334455',
-  //     location: 'Mombasa',
-  //   },
-  //   {
-  //     firstName: 'John',
-  //     lastName: 'Doe',
-  //     email: 'john@gmail.com',
-  //     role: 'Moderator',
-  //     status: 'Active',
-  //     createdAt: '2024-07-20',
-  //     phoneNumber: '0799887766',
-  //     location: 'Kisumu',
-  //   },
-  // ];
-
+export class FilterTableComponent implements OnInit {
   allUsers: User[] = [
     {
       firstName: 'Samuel',
@@ -158,7 +125,6 @@ export class FilterTableComponent {
       location: 'Machakos',
     },
   ];
-
   filters = [
     'firstName',
     'lastName',
@@ -171,12 +137,14 @@ export class FilterTableComponent {
   ];
   filteredUsers: User[] = [...this.allUsers];
   constructor(private dialog: MatDialog) {}
+  ngOnInit(): void {
+    this.filteredUsers = [...this.allUsers];
+  }
   openConditionDialog(selectedField: string) {
     const conditionDialog = this.dialog.open(ConditionDialogComponent, {
       width: '350px',
       data: { field: selectedField },
     });
-
     conditionDialog.afterClosed().subscribe((condition) => {
       if (condition) {
         this.applyFilter(selectedField, condition);
@@ -185,62 +153,95 @@ export class FilterTableComponent {
   }
   openFilterDialog() {
     const dialogRef = this.dialog.open(FilterDialogComponent, {
-      width: '500px',
+      width: '900px',
       height: '300px',
     });
-    // dialogRef.afterClosed().subscribe((selectedFiled) => {
-    //   if (selectedFiled) {
-    //     const conditionDialog = this.dialog.open(ConditionDialogComponent, {
-    //       width: '350px',
-    //       data: { field: selectedFiled },
-    //     });
-    //     conditionDialog.afterClosed().subscribe((condition) => {
-    //       if (condition) {
-    //         this.applyFilter(selectedFiled, condition);
-    //       }
-    //     });
-    //   }
-    // });
     dialogRef.afterClosed().subscribe((result) => {
+      console.log('filter dialog colosed', result);
       if (result) {
-        const { selectedFilter, quickFilters, customFilters } = result;
+        const { quickFilters, customFilters } = result;
+        console.log(
+          'quick filters',
+          quickFilters,
+          'customFilters',
+          customFilters
+        );
         let filteredData = [...this.allUsers];
         const activeQuickFilters = Object.keys(quickFilters).filter(
           (key) => quickFilters[key] === true
         );
         if (activeQuickFilters.length > 0) {
-          this.filteredUsers = this.allUsers.filter(
+          filteredData = filteredData.filter(
             (user) =>
               activeQuickFilters.includes(user.status) ||
               activeQuickFilters.includes(user.role)
           );
         }
+        // if (customFilters && customFilters.length > 0) {
+        //   customFilters.forEach((filter: any) => {
+        //     const { field, operator, value } = filter;
+        //     if (!field || !operator || !value) {
+        //       return;
+        //     }
+        //     filteredData = filteredData.filter((user) => {
+        //       const fieldValue = String(
+        //         user[field as keyof User]
+        //       ).toLowerCase();
+        //       const filterValue = String(value).toLowerCase();
+        //       switch (operator) {
+        //         case 'equals':
+        //           return fieldValue === filterValue;
+        //         case 'contains':
+        //           return fieldValue.includes(filterValue);
+        //         case 'startsWith':
+        //           return fieldValue.startsWith(filterValue);
+        //         case 'endsWith':
+        //           return fieldValue.endsWith(filterValue);
+        //         default:
+        //           return false;
+        //       }
+        //     });
+        //   });
+        // }
         if (customFilters && customFilters.length > 0) {
-          customFilters.forEach((filter: any) => {
-            const { field, operator, value } = filter;
-            filteredData = filteredData.filter((user) => {
-              
-            });
-          });
-        } else if (selectedFilter) {
-          const conditionDialog = this.dialog.open(ConditionDialogComponent, {
-            width: '350px',
-            data: { field: selectedFilter },
-          });
-          conditionDialog.afterClosed().subscribe((condition) => {
-            if (condition) {
-              this.applyFilter(selectedFilter, condition);
-            }
-          });
+          filteredData = filteredData.filter((user) =>
+            customFilters.some((filter: any) => {
+              const { field, operator, value } = filter;
+              // Skip incomplete filters
+              if (!field || !operator || !value) {
+                return false;
+              }
+              const fieldValue = String(
+                user[field as keyof User]
+              ).toLowerCase();
+              const filterValue = String(value).toLowerCase();
+              switch (operator) {
+                case 'equals':
+                  return fieldValue === filterValue;
+                case 'contains':
+                  return fieldValue.includes(filterValue);
+                case 'startsWith':
+                  return fieldValue.startsWith(filterValue);
+                case 'endsWith':
+                  return fieldValue.endsWith(filterValue);
+                default:
+                  return false;
+              }
+            })
+          );
         }
+        this.filteredUsers = filteredData;
       }
     });
   }
   applyFilter(field: string, condition: string) {
     this.filteredUsers = this.allUsers.filter((user) =>
-      user[field as keyof User]
+      String(user[field as keyof User])
         .toLowerCase()
         .startsWith(condition.toLowerCase())
     );
+  }
+  resetFilters() {
+    this.filteredUsers = [...this.allUsers];
   }
 }

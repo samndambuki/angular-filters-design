@@ -1,10 +1,5 @@
 <mat-dialog-content>
   <h3>Quick filters</h3>
-  <!-- <div *ngFor="let filter of filters">
-    <mat-checkbox [(ngModel)]="quickFilters[filter]">
-      {{ filter | titlecase }}
-    </mat-checkbox>
-  </div> -->
   <p *ngIf="selectedQuickFiltersCount > 0">
     {{ selectedQuickFiltersCount }} filter(s) selected
   </p>
@@ -18,7 +13,7 @@
 
   <h3>Custom Filters</h3>
   <div *ngFor="let filter of customFilters; let i = index">
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" style="margin: 10px">
       <mat-label>Field</mat-label>
       <mat-select [(ngModel)]="filter.field">
         <mat-option value="firstName">First Name</mat-option>
@@ -30,7 +25,7 @@
         <mat-option value="location">Location</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" style="margin: 10px">
       <mat-label>Operator</mat-label>
       <mat-select [(ngModel)]="filter.operator">
         <mat-option value="equals">Equals</mat-option>
@@ -40,9 +35,10 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
+      <mat-label>Value</mat-label>
       <input matInput [(ngModel)]="filter.value" />
     </mat-form-field>
-    <button mat-icon-button (click)="removeCustomFilter(i)" color="warn">
+    <button mat-button (click)="removeCustomFilter(i)" color="warn">
       <mat-icon>delete</mat-icon>
     </button>
   </div>
@@ -50,15 +46,6 @@
     <mat-icon>add</mat-icon>
     Add Filter
   </button>
-
-  <!-- <mat-form-field>
-    <mat-label> Filter Field </mat-label>
-    <mat-select [(ngModel)]="selectedFilter">
-      <mat-option *ngFor="let filter of filters" [value]="filter">{{
-        filter
-      }}</mat-option>
-    </mat-select>
-  </mat-form-field> -->
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="close()">Cancel</button>

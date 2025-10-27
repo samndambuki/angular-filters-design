@@ -25,23 +25,12 @@ import { MatSelectModule } from '@angular/material/select';
     MatDialogActions,
     MatDialogContent,
     MatCheckboxModule,
-    MatIconModule
+    MatIconModule,
   ],
   templateUrl: './filter-dialog.component.html',
   styleUrl: './filter-dialog.component.scss',
 })
 export class FilterDialogComponent {
-  // filters = [
-  //   'firstName',
-  //   'lastName',
-  //   'email',
-  //   'role',
-  //   'status',
-  //   'createdAt',
-  //   'phoneNumber',
-  //   'location',
-  // ];
-  // filters = ['role', 'status'];
   selectedFilter = '';
   quickFilters: { [key: string]: boolean } = {
     Active: false,
@@ -49,10 +38,10 @@ export class FilterDialogComponent {
     Admin: false,
     User: false,
   };
+
   customFilters: { field: string; operator: string; value: string }[] = [];
-  constructor(private dialogRef: MatDialogRef<FilterDialogComponent>) {
-    // this.filters.forEach((filter) => (this.quickFilters[filter] = false));
-  }
+
+  constructor(private dialogRef: MatDialogRef<FilterDialogComponent>) {}
 
   addCustomFilter() {
     this.customFilters.push({ field: '', operator: '', value: '' });
@@ -65,6 +54,7 @@ export class FilterDialogComponent {
   close() {
     this.dialogRef.close();
   }
+
   apply() {
     this.dialogRef.close({
       quickFilters: this.quickFilters,
@@ -72,6 +62,7 @@ export class FilterDialogComponent {
       customFilters: this.customFilters,
     });
   }
+
   get selectedQuickFiltersCount(): number {
     return Object.values(this.quickFilters).filter((value) => value).length;
   }
