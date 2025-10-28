@@ -151,70 +151,46 @@ export class FilterTableComponent implements OnInit {
       }
     });
   }
+
   openFilterDialog() {
     const dialogRef = this.dialog.open(FilterDialogComponent, {
       width: '900px',
       height: '300px',
     });
+
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('filter dialog colosed', result);
       if (result) {
         const { quickFilters, customFilters } = result;
-        console.log(
-          'quick filters',
-          quickFilters,
-          'customFilters',
-          customFilters
-        );
-        let filteredData = [...this.allUsers];
+        let filteredData: User[] = [];
+
         const activeQuickFilters = Object.keys(quickFilters).filter(
           (key) => quickFilters[key] === true
         );
+
+        const quickResults: User[] = [];
+        const customResults: User[] = [];
+
         if (activeQuickFilters.length > 0) {
-          filteredData = filteredData.filter(
-            (user) =>
-              activeQuickFilters.includes(user.status) ||
-              activeQuickFilters.includes(user.role)
+          quickResults.push(
+            ...this.allUsers.filter(
+              (user) =>
+                activeQuickFilters.includes(user.status) ||
+                activeQuickFilters.includes(user.role)
+            )
           );
         }
-        // if (customFilters && customFilters.length > 0) {
-        //   customFilters.forEach((filter: any) => {
-        //     const { field, operator, value } = filter;
-        //     if (!field || !operator || !value) {
-        //       return;
-        //     }
-        //     filteredData = filteredData.filter((user) => {
-        //       const fieldValue = String(
-        //         user[field as keyof User]
-        //       ).toLowerCase();
-        //       const filterValue = String(value).toLowerCase();
-        //       switch (operator) {
-        //         case 'equals':
-        //           return fieldValue === filterValue;
-        //         case 'contains':
-        //           return fieldValue.includes(filterValue);
-        //         case 'startsWith':
-        //           return fieldValue.startsWith(filterValue);
-        //         case 'endsWith':
-        //           return fieldValue.endsWith(filterValue);
-        //         default:
-        //           return false;
-        //       }
-        //     });
-        //   });
-        // }
+
         if (customFilters && customFilters.length > 0) {
-          filteredData = filteredData.filter((user) =>
-            customFilters.some((filter: any) => {
-              const { field, operator, value } = filter;
-              // Skip incomplete filters
-              if (!field || !operator || !value) {
-                return false;
-              }
+          customFilters.forEach((filter: any) => {
+            const { field, operator, value } = filter;
+            if (!field || !operator || !value) return;
+
+            const matches = this.allUsers.filter((user) => {
               const fieldValue = String(
                 user[field as keyof User]
               ).toLowerCase();
               const filterValue = String(value).toLowerCase();
+
               switch (operator) {
                 case 'equals':
                   return fieldValue === filterValue;
@@ -227,13 +203,31 @@ export class FilterTableComponent implements OnInit {
                 default:
                   return false;
               }
-            })
-          );
+            });
+
+            customResults.push(...matches);
+          });
         }
+
+        const combined = [...quickResults, ...customResults];
+
+        filteredData = combined.filter(
+          (user, index, self) =>
+            index === self.findIndex((u) => u.email === user.email)
+        );
+
+        if (
+          activeQuickFilters.length === 0 &&
+          (!customFilters || customFilters.length === 0)
+        ) {
+          filteredData = [...this.allUsers];
+        }
+
         this.filteredUsers = filteredData;
       }
     });
   }
+
   applyFilter(field: string, condition: string) {
     this.filteredUsers = this.allUsers.filter((user) =>
       String(user[field as keyof User])
